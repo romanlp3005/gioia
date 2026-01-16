@@ -86,9 +86,20 @@
       padding: 10px 0;
       height: 100%;
     }
-    .brand{ display:flex; align-items:center; gap:12px; }
-    .logo-wrap{ position:relative; width:60px; height:60px; overflow: hidden; border-radius: 50%; }
-    .logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .brand{ display:flex; align-items:center; gap:12px; text-decoration: none; }
+    
+    /* LOGO FIX: Removed circular cropping styles */
+    .logo-wrap{ 
+      height: 60px; /* Hauteur fixe pour le logo */
+      width: auto; 
+      display: flex; 
+      align-items: center; 
+    }
+    .logo-wrap img { 
+      height: 100%; 
+      width: auto; 
+      object-fit: contain; 
+    }
     
     .nav-links{ display:flex; gap:24px; align-items:center; }
     .nav-links button{
@@ -735,11 +746,11 @@
   <nav class="nav">
     <div class="container">
       <div class="nav-row">
-        <div class="brand">
+        <a href="#" class="brand">
           <div class="logo-wrap" aria-hidden="true">
             <img src="gioia_logo.webp" alt="Gioia Logo">
           </div>
-        </div>
+        </a>
 
         <div style="display:flex; align-items:center;">
           <div class="nav-links" aria-label="Navigation principale">
@@ -1273,7 +1284,7 @@
         label_date: "Date",
         label_time: "Heure",
         label_guests: "Nombre de Personnes",
-        label_message: "Message (optionnel)",
+        label_message: "Mensaje (optionnel)",
         form_submit: "Confirmer la Réservation →",
         footer_desc: "Cuisine méditerranéenne fusion au cœur de Minorque. Un voyage culinaire entre traditions et créativité.",
         footer_nav: "Navigation",
