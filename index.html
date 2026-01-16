@@ -172,41 +172,18 @@
       border-bottom: 1px solid rgba(214,199,176,.35);
     }
 
-    /* STICKY STACKING LOGIC 
-       Chaque section principale devient sticky.
-       Elles doivent avoir une hauteur min pour que l'effet fonctionne bien.
-       On ajoute une ombre portée en haut pour bien délimiter la superposition.
-       Important: background doit être opaque.
-    */
+    /* NORMAL FLOW LOGIC (Suppression du Stacking) */
     .sticky-section {
-      position: sticky;
-      top: var(--nav-height); /* Colle juste sous le menu */
-      min-height: 100vh;      /* Force la hauteur pour que le scroll se fasse */
-      background: var(--bg);  /* Fond opaque */
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* Centre le contenu verticalement (optionnel) */
-      box-shadow: 0 -20px 40px rgba(0,0,0,0.08); /* Ombre sur le haut */
-      overflow: hidden; /* Empêche les débordements */
-      padding-top: 40px;
-      padding-bottom: 40px;
+      position: relative; /* Retour au flux normal */
+      background: var(--bg);
+      padding-top: 100px;
+      padding-bottom: 100px;
     }
     
-    /* Le Hero est le premier, il n'a pas besoin d'ombre en haut mais doit être sticky */
     .hero.sticky-section {
-      top: 0; /* Le hero peut commencer tout en haut derrière le menu transparent */
-      padding-top: var(--nav-height);
-      box-shadow: none;
-      z-index: 1;
+      padding-top: calc(var(--nav-height) + 40px); /* Padding pour éviter d'être caché par la nav fixe */
+      min-height: 100vh;
     }
-    
-    /* Ordre de stack (optionnel mais plus sûr) */
-    #a-propos { z-index: 2; }
-    #menu     { z-index: 3; }
-    #instagram{ z-index: 4; }
-    #avis     { z-index: 5; }
-    #contact  { z-index: 6; }
-    footer    { z-index: 7; position: sticky; top: var(--nav-height); background: var(--navy); min-height: auto; }
 
 
     /* HERO */
@@ -667,7 +644,6 @@
       color: var(--bg);
       padding: 56px 0;
       overflow:hidden;
-      box-shadow: 0 -20px 40px rgba(0,0,0,0.15); /* Shadow for sticky overlap */
     }
     .blob1,.blob2{
       position:absolute;
@@ -728,15 +704,13 @@
       .contact-grid{ grid-template-columns: 1fr; }
       .footer-grid{ grid-template-columns: 1fr; }
       
-      /* Reset sticky on mobile if content is too tall? 
-         Usually sticky stacks are fine on mobile, but let's keep it. */
       .hero h1 { font-size: 42px; }
     }
     @media (max-width: 820px){
       .nav-links{ display:none; }
       .burger{ display:flex; }
       .insta-grid{ gap: 4px; }
-      .sticky-section { min-height: auto; /* Allow easier scrolling on mobile */ }
+      .sticky-section { padding-top: 60px; padding-bottom: 60px; }
     }
   </style>
 </head>
@@ -787,7 +761,7 @@
     </div>
   </nav>
 
-  <!-- HERO (Sticky Stack 1) -->
+  <!-- HERO -->
   <header id="accueil" class="hero sticky-section">
     <div class="hero-bg" aria-hidden="true"></div>
 
@@ -823,7 +797,7 @@
     <div class="scroll-indicator" aria-hidden="true"><span></span></div>
   </header>
 
-  <!-- ABOUT (Sticky Stack 2) -->
+  <!-- ABOUT -->
   <section id="a-propos" class="sticky-section">
     <div class="container">
       <div class="section-header">
@@ -890,7 +864,7 @@
     </div>
   </section>
 
-  <!-- MENU (Sticky Stack 3) -->
+  <!-- MENU -->
   <section id="menu" class="menu sticky-section">
     <div class="container" style="position:relative;">
       <div class="section-header">
@@ -922,7 +896,7 @@
     </div>
   </section>
 
-  <!-- INSTAGRAM (Sticky Stack 4) -->
+  <!-- INSTAGRAM -->
   <section id="instagram" class="sticky-section">
     <div class="container">
       <div class="section-header">
@@ -972,7 +946,7 @@
     </div>
   </section>
 
-  <!-- REVIEWS (Sticky Stack 5) -->
+  <!-- REVIEWS -->
   <section id="avis" class="sticky-section" style="background: var(--bg);">
     <div class="container">
       <div class="section-header">
@@ -1024,7 +998,7 @@
     </div>
   </section>
 
-  <!-- CONTACT (Sticky Stack 6) -->
+  <!-- CONTACT -->
   <section id="contact" class="contact sticky-section">
     <div class="container">
       <div class="section-header">
@@ -1172,7 +1146,7 @@
     </div>
   </section>
 
-  <!-- FOOTER (Sticky) -->
+  <!-- FOOTER -->
   <footer>
     <div class="blob1" aria-hidden="true"></div>
     <div class="blob2" aria-hidden="true"></div>
