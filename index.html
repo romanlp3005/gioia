@@ -21,6 +21,7 @@
       --shadow: 0 20px 60px rgba(14,42,71,.18);
       --radius-2xl: 24px;
       --radius-3xl: 32px;
+      --nav-height: 86px;
     }
 
     *{ box-sizing:border-box; }
@@ -77,17 +78,19 @@
       backdrop-filter: blur(10px);
       border-bottom: 2px solid var(--sand);
       box-shadow: 0 12px 30px rgba(14,42,71,.10);
-      z-index: 50;
+      z-index: 100; /* High z-index to stay above sticky sections */
+      height: var(--nav-height);
     }
     .nav-row{
       display:flex; align-items:center; justify-content:space-between;
       padding: 10px 0;
+      height: 100%;
     }
     .brand{ display:flex; align-items:center; gap:12px; }
     .logo-wrap{ position:relative; width:60px; height:60px; overflow: hidden; border-radius: 50%; }
     .logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
     
-    .nav-links{ display:flex; gap:28px; align-items:center; }
+    .nav-links{ display:flex; gap:24px; align-items:center; }
     .nav-links button{
       border:0; background:transparent; cursor:pointer;
       color: var(--navy);
@@ -106,6 +109,30 @@
     }
     .nav-links button:hover::after{ width:100%; }
 
+    /* Language Switcher */
+    .lang-switch{
+      display:flex; align-items:center; gap:4px;
+      border: 1px solid var(--sand);
+      padding: 4px;
+      border-radius: 20px;
+      margin-left: 12px;
+    }
+    .lang-btn{
+      border:0; background:transparent; cursor:pointer;
+      padding: 4px 8px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      opacity: 0.6;
+      transition: all 0.2s;
+    }
+    .lang-btn.active{
+      background: var(--coral);
+      color: var(--white);
+      opacity: 1;
+    }
+
     .burger{
       display:none;
       width:42px; height:42px;
@@ -121,6 +148,7 @@
       border-top: 2px solid var(--sand);
       background: var(--bg);
       padding: 12px 0;
+      position: absolute; width: 100%; left:0; top: 100%;
     }
     .mobile-panel.show{ display:block; }
     .mobile-panel button{
@@ -132,17 +160,50 @@
       color: var(--navy);
       border-bottom: 1px solid rgba(214,199,176,.35);
     }
-    .mobile-panel button:last-child{ border-bottom:0; }
+
+    /* STICKY STACKING LOGIC 
+       Chaque section principale devient sticky.
+       Elles doivent avoir une hauteur min pour que l'effet fonctionne bien.
+       On ajoute une ombre portée en haut pour bien délimiter la superposition.
+       Important: background doit être opaque.
+    */
+    .sticky-section {
+      position: sticky;
+      top: var(--nav-height); /* Colle juste sous le menu */
+      min-height: 100vh;      /* Force la hauteur pour que le scroll se fasse */
+      background: var(--bg);  /* Fond opaque */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Centre le contenu verticalement (optionnel) */
+      box-shadow: 0 -20px 40px rgba(0,0,0,0.08); /* Ombre sur le haut */
+      overflow: hidden; /* Empêche les débordements */
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+    
+    /* Le Hero est le premier, il n'a pas besoin d'ombre en haut mais doit être sticky */
+    .hero.sticky-section {
+      top: 0; /* Le hero peut commencer tout en haut derrière le menu transparent */
+      padding-top: var(--nav-height);
+      box-shadow: none;
+      z-index: 1;
+    }
+    
+    /* Ordre de stack (optionnel mais plus sûr) */
+    #a-propos { z-index: 2; }
+    #menu     { z-index: 3; }
+    #instagram{ z-index: 4; }
+    #avis     { z-index: 5; }
+    #contact  { z-index: 6; }
+    footer    { z-index: 7; position: sticky; top: var(--nav-height); background: var(--navy); min-height: auto; }
+
 
     /* HERO */
     .hero{
       position:relative;
-      min-height: 100vh;
       display:flex;
       align-items:center;
       justify-content:center;
-      overflow:hidden;
-      padding-top: 86px; /* nav offset */
     }
     .hero-bg{
       position:absolute; inset:0;
@@ -228,8 +289,6 @@
     .shape.top{ top:-2px; }
 
     /* SECTIONS */
-    section{ position:relative; }
-    .section-pad{ padding: 120px 0; }
     .section-header{ text-align:center; margin-bottom: 56px; }
     .kicker{
       display:inline-flex; gap:10px; align-items:center;
@@ -429,7 +488,7 @@
     .item h4{ margin:0 0 6px; font-size: 16px; font-weight:700; }
     .item p{ margin:0; font-size: 13px; color: rgba(14,42,71,.72); }
 
-    /* INSTAGRAM / GALLERY SECTION */
+    /* INSTAGRAM */
     .insta-header{
       display:flex; flex-direction: column; align-items:center; gap:16px;
       margin-bottom: 40px;
@@ -444,7 +503,7 @@
     .insta-grid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px; /* Small gap like IG */
+      gap: 12px;
     }
     .insta-tile{
       position:relative;
@@ -470,7 +529,7 @@
     .insta-tile:hover .insta-overlay{ opacity:1; }
     .insta-icon{ display:flex; align-items:center; gap:5px; }
 
-    /* REVIEWS SECTION */
+    /* REVIEWS */
     .reviews-grid{
       display:grid; grid-template-columns: repeat(3, 1fr); gap:24px;
     }
@@ -491,7 +550,7 @@
     }
     .review-text{ font-size:14px; font-style:italic; opacity:.8; line-height:1.6; color: var(--navy); }
 
-    /* CONTACT & MAP */
+    /* CONTACT */
     .contact{
       background: linear-gradient(to bottom, var(--bg), rgba(214,199,176,.20));
     }
@@ -525,7 +584,6 @@
       flex: 0 0 auto;
     }
     
-    /* Interactive Map Styling */
     .map-container{
       margin-top: 24px;
       border-radius: var(--radius-3xl);
@@ -535,11 +593,7 @@
       width: 100%;
       position: relative;
     }
-    .map-container iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
+    .map-container iframe { width: 100%; height: 100%; border: 0; }
 
     .form-wrap{
       position:relative;
@@ -602,6 +656,7 @@
       color: var(--bg);
       padding: 56px 0;
       overflow:hidden;
+      box-shadow: 0 -20px 40px rgba(0,0,0,0.15); /* Shadow for sticky overlap */
     }
     .blob1,.blob2{
       position:absolute;
@@ -661,11 +716,16 @@
       .reviews-grid{ grid-template-columns: 1fr; }
       .contact-grid{ grid-template-columns: 1fr; }
       .footer-grid{ grid-template-columns: 1fr; }
+      
+      /* Reset sticky on mobile if content is too tall? 
+         Usually sticky stacks are fine on mobile, but let's keep it. */
+      .hero h1 { font-size: 42px; }
     }
     @media (max-width: 820px){
       .nav-links{ display:none; }
       .burger{ display:flex; }
       .insta-grid{ gap: 4px; }
+      .sticky-section { min-height: auto; /* Allow easier scrolling on mobile */ }
     }
   </style>
 </head>
@@ -677,39 +737,47 @@
       <div class="nav-row">
         <div class="brand">
           <div class="logo-wrap" aria-hidden="true">
-            <img src="img/gioia_logo.png" alt="Gioia Logo" onerror="this.src='gioia_logo.webp'">
+            <img src="gioia_logo.webp" alt="Gioia Logo">
           </div>
         </div>
 
-        <div class="nav-links" aria-label="Navigation principale">
-          <button data-scroll="accueil">Accueil</button>
-          <button data-scroll="a-propos">À Propos</button>
-          <button data-scroll="menu">Menu</button>
-          <button data-scroll="instagram">Instagram</button>
-          <button data-scroll="avis">Avis</button>
-          <button data-scroll="contact">Contact</button>
-        </div>
+        <div style="display:flex; align-items:center;">
+          <div class="nav-links" aria-label="Navigation principale">
+            <button data-scroll="accueil" data-i18n="nav_home">Accueil</button>
+            <button data-scroll="a-propos" data-i18n="nav_about">À Propos</button>
+            <button data-scroll="menu" data-i18n="nav_menu">Menu</button>
+            <button data-scroll="instagram" data-i18n="nav_insta">Instagram</button>
+            <button data-scroll="avis" data-i18n="nav_reviews">Avis</button>
+            <button data-scroll="contact" data-i18n="nav_contact">Contact</button>
+          </div>
 
-        <button class="burger" id="burger" aria-label="Ouvrir le menu">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
+          <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLanguage('fr')">FR</button>
+            <button class="lang-btn" onclick="setLanguage('es')">ES</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+          </div>
+
+          <button class="burger" id="burger" aria-label="Ouvrir le menu" style="margin-left:12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="mobile-panel" id="mobilePanel" aria-label="Navigation mobile">
-      <button data-scroll="accueil">Accueil</button>
-      <button data-scroll="a-propos">À Propos</button>
-      <button data-scroll="menu">Menu</button>
-      <button data-scroll="instagram">Instagram</button>
-      <button data-scroll="avis">Avis</button>
-      <button data-scroll="contact">Contact</button>
+      <button data-scroll="accueil" data-i18n="nav_home">Accueil</button>
+      <button data-scroll="a-propos" data-i18n="nav_about">À Propos</button>
+      <button data-scroll="menu" data-i18n="nav_menu">Menu</button>
+      <button data-scroll="instagram" data-i18n="nav_insta">Instagram</button>
+      <button data-scroll="avis" data-i18n="nav_reviews">Avis</button>
+      <button data-scroll="contact" data-i18n="nav_contact">Contact</button>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <header id="accueil" class="hero">
+  <!-- HERO (Sticky Stack 1) -->
+  <header id="accueil" class="hero sticky-section">
     <div class="hero-bg" aria-hidden="true"></div>
 
     <svg class="shape bottom" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:220px;">
@@ -725,45 +793,38 @@
         <div class="line"></div><div class="diamond"></div><div class="line"></div>
       </div>
 
-      <h1 class="serif italic">Restaurant méditerranéen à Minorque</h1>
+      <h1 class="serif italic" data-i18n="hero_title">Restaurant méditerranéen à Minorque</h1>
 
       <div class="hero-pill">
-        <div class="sand" style="text-transform:uppercase; letter-spacing:.26em; font-size:14px;">
+        <div class="sand" style="text-transform:uppercase; letter-spacing:.26em; font-size:14px;" data-i18n="hero_pill">
           Cuisine Méditerranéenne &amp; Fusion
         </div>
       </div>
 
-      <p class="hero-sub">Une célébration des saveurs méditerranéennes à Minorque</p>
+      <p class="hero-sub" data-i18n="hero_sub">Une célébration des saveurs méditerranéennes à Minorque</p>
 
       <div class="hero-cta">
-        <button class="btn btn-primary" data-scroll="menu">Découvrir Notre Menu</button>
-        <button class="btn btn-outline" data-scroll="contact">Réserver une Table</button>
+        <button class="btn btn-primary" data-scroll="menu" data-i18n="btn_menu">Découvrir Notre Menu</button>
+        <button class="btn btn-outline" data-scroll="contact" data-i18n="btn_book">Réserver une Table</button>
       </div>
     </div>
 
     <div class="scroll-indicator" aria-hidden="true"><span></span></div>
   </header>
 
-  <!-- ABOUT -->
-  <section id="a-propos" class="section-pad">
-    <svg class="shape top" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:86px;">
-      <path d="M0,0 C300,100 500,100 600,50 C700,0 900,0 1200,50 L1200,120 L0,120 Z" fill="#0E2A47" opacity="0.1"/>
-    </svg>
-
+  <!-- ABOUT (Sticky Stack 2) -->
+  <section id="a-propos" class="sticky-section">
     <div class="container">
       <div class="section-header">
         <div class="kicker">
-          <span class="bar"></span><span>Notre Histoire</span><span class="bar"></span>
+          <span class="bar"></span><span data-i18n="about_kicker">Notre Histoire</span><span class="bar"></span>
         </div>
-        <h2 class="serif italic">L'Esprit Gioia</h2>
+        <h2 class="serif italic" data-i18n="about_title">L'Esprit Gioia</h2>
       </div>
 
       <div class="about-grid">
         <div class="frame">
-          <img
-            src="gioia.terasse.webp"
-            alt="Intérieur du restaurant Gioia"
-          />
+          <img src="gioia.terasse.webp" alt="Intérieur du restaurant Gioia" />
           <div class="badge">
             <div class="serif italic" style="font-size:20px;">Gioia</div>
             <div style="font-size:12px;">Minorque</div>
@@ -771,21 +832,21 @@
         </div>
 
         <div>
-          <p class="muted" style="font-size:18px;">
+          <p class="muted" style="font-size:18px;" data-i18n="about_p1">
             <span class="coral serif italic" style="font-size:28px;">Gioia</span> signifie "joie" en italien,
             et c'est exactement ce que nous souhaitons partager avec vous. Situé au cœur de Minorque,
             notre restaurant célèbre la richesse des saveurs méditerranéennes avec une touche de créativité contemporaine.
           </p>
-          <p class="muted" style="font-size:18px;">
+          <p class="muted" style="font-size:18px;" data-i18n="about_p2">
             De nos ceviches rafraîchissants à nos baos fusion asiatique-méditerranéenne, en passant par nos tapas traditionnelles,
             chaque plat est une invitation au voyage culinaire. Nous travaillons avec des producteurs locaux de Minorque pour vous offrir le meilleur de l'île.
           </p>
 
           <div class="quote">
-            <div class="serif italic" style="font-size:22px;">
+            <div class="serif italic" style="font-size:22px;" data-i18n="about_quote">
               "Chaque plat raconte une histoire, celle de la mer, du soleil et de la passion."
             </div>
-            <div class="sand" style="margin-top:8px;">— L'équipe Gioia</div>
+            <div class="sand" style="margin-top:8px;" data-i18n="about_team">— L'équipe Gioia</div>
           </div>
         </div>
       </div>
@@ -794,49 +855,39 @@
         <div class="card">
           <div class="corner" style="background:#0E2A47;"></div>
           <div style="font-size:44px; margin-bottom:10px;">🥢</div>
-          <h3 style="margin:0 0 8px;">Cuisine Fusion</h3>
-          <p class="muted" style="margin:0;">Un mariage audacieux entre traditions méditerranéennes et influences asiatiques</p>
+          <h3 style="margin:0 0 8px;" data-i18n="feat_fusion_title">Cuisine Fusion</h3>
+          <p class="muted" style="margin:0;" data-i18n="feat_fusion_desc">Un mariage audacieux entre traditions méditerranéennes et influences asiatiques</p>
           <div class="bar" style="background:#0E2A47;"></div>
         </div>
 
         <div class="card">
           <div class="corner" style="background:#D87C56;"></div>
           <div style="font-size:44px; margin-bottom:10px;">🌿</div>
-          <h3 style="margin:0 0 8px;">Produits Locaux</h3>
-          <p class="muted" style="margin:0;">Fromages de Torre d'en Quart et ingrédients frais de Minorque</p>
+          <h3 style="margin:0 0 8px;" data-i18n="feat_local_title">Produits Locaux</h3>
+          <p class="muted" style="margin:0;" data-i18n="feat_local_desc">Fromages de Torre d'en Quart et ingrédients frais de Minorque</p>
           <div class="bar" style="background:#D87C56;"></div>
         </div>
 
         <div class="card">
           <div class="corner" style="background:#D6C7B0;"></div>
           <div style="font-size:44px; margin-bottom:10px;">🍸</div>
-          <h3 style="margin:0 0 8px;">Cocktails Créatifs</h3>
-          <p class="muted" style="margin:0;">Une carte de cocktails signature inspirée par la Méditerranée</p>
+          <h3 style="margin:0 0 8px;" data-i18n="feat_cocktail_title">Cocktails Créatifs</h3>
+          <p class="muted" style="margin:0;" data-i18n="feat_cocktail_desc">Une carte de cocktails signature inspirée par la Méditerranée</p>
           <div class="bar" style="background:#D6C7B0;"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MENU -->
-  <section id="menu" class="section-pad menu">
-    <svg class="shape top" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:180px; transform: scaleY(-1);">
-      <path d="M 0 400 Q 200 100 400 50 Q 600 100 800 400 L 800 400 L 0 400 Z" fill="#FAF7F2" opacity="0.15"></path>
-      <path d="M 0 400 Q 250 150 400 100 Q 550 150 800 400" stroke="#FAF7F2" stroke-width="3" fill="none" opacity="0.3"></path>
-    </svg>
-
-    <svg class="shape bottom" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:180px;">
-      <path d="M 0 400 Q 200 100 400 50 Q 600 100 800 400 L 800 400 L 0 400 Z" fill="#FAF7F2" opacity="0.15"></path>
-      <path d="M 0 400 Q 250 150 400 100 Q 550 150 800 400" stroke="#FAF7F2" stroke-width="3" fill="none" opacity="0.3"></path>
-    </svg>
-
+  <!-- MENU (Sticky Stack 3) -->
+  <section id="menu" class="menu sticky-section">
     <div class="container" style="position:relative;">
       <div class="section-header">
         <div class="kicker">
-          <span class="bar"></span><span>Notre Carte</span><span class="bar"></span>
+          <span class="bar"></span><span data-i18n="menu_kicker">Notre Carte</span><span class="bar"></span>
         </div>
         <h2 class="serif italic" style="color:var(--bg);">Menu Gioia</h2>
-        <p>Une cuisine fusion française et hispanique avec des produits locaux de Minorque</p>
+        <p data-i18n="menu_sub">Une cuisine fusion française et hispanique avec des produits locaux de Minorque</p>
       </div>
 
       <div class="tabs-wrap">
@@ -860,19 +911,15 @@
     </div>
   </section>
 
-  <!-- INSTAGRAM SECTION -->
-  <section id="instagram" class="section-pad">
-    <svg class="shape top" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:86px;">
-      <path d="M0,0 C300,100 500,100 600,50 C700,0 900,0 1200,50 L1200,120 L0,120 Z" fill="#0E2A47" opacity="0.1"/>
-    </svg>
-
+  <!-- INSTAGRAM (Sticky Stack 4) -->
+  <section id="instagram" class="sticky-section">
     <div class="container">
       <div class="section-header">
         <div class="kicker">
           <span class="bar"></span><span>Social</span><span class="bar"></span>
         </div>
-        <h2 class="serif italic">Le Mur Gioia</h2>
-        <p class="muted">Rejoignez notre communauté sur Instagram</p>
+        <h2 class="serif italic" data-i18n="insta_title">Le Mur Gioia</h2>
+        <p class="muted" data-i18n="insta_sub">Rejoignez notre communauté sur Instagram</p>
       </div>
 
       <!-- Fake Instagram Header -->
@@ -883,89 +930,53 @@
         <div style="text-align:center;">
           <h3 style="margin:0 0 4px; font-size:20px;">@gioia_aperitivo</h3>
           <div class="insta-stats">
-            <span>256 Publications</span>
-            <span>2.8k Abonnés</span>
+            <span>256 Posts</span>
+            <span data-i18n="insta_followers">2.8k Abonnés</span>
           </div>
         </div>
-        <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="btn btn-primary" style="padding:10px 24px; font-size:14px;">S'abonner</a>
+        <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="btn btn-primary" style="padding:10px 24px; font-size:14px;" data-i18n="insta_btn">S'abonner</a>
       </div>
 
       <!-- Instagram Grid -->
       <div class="insta-grid">
-        <!-- Post 1 -->
         <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="insta-tile">
           <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=600&q=80" alt="Salade fraîche">
-          <div class="insta-overlay">
-            <div class="insta-icon">❤️ 124</div>
-            <div class="insta-icon">💬 8</div>
-          </div>
         </a>
-
-        <!-- Post 2 -->
         <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="insta-tile">
           <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=600&q=80" alt="Cocktail signature">
-          <div class="insta-overlay">
-            <div class="insta-icon">❤️ 89</div>
-            <div class="insta-icon">💬 3</div>
-          </div>
         </a>
-
-        <!-- Post 3 -->
         <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="insta-tile">
           <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80" alt="Ambiance soirée">
-          <div class="insta-overlay">
-            <div class="insta-icon">❤️ 210</div>
-            <div class="insta-icon">💬 15</div>
-          </div>
         </a>
-
-        <!-- Post 4 -->
         <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="insta-tile">
           <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=600&q=80" alt="Plat de pâtes">
-          <div class="insta-overlay">
-            <div class="insta-icon">❤️ 156</div>
-            <div class="insta-icon">💬 12</div>
-          </div>
         </a>
-
-        <!-- Post 5 -->
         <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="insta-tile">
           <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Tapas délicieux">
-          <div class="insta-overlay">
-            <div class="insta-icon">❤️ 178</div>
-            <div class="insta-icon">💬 9</div>
-          </div>
         </a>
-
-        <!-- Post 6 -->
         <a href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" class="insta-tile">
           <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=600&q=80" alt="Curry et riz">
-          <div class="insta-overlay">
-            <div class="insta-icon">❤️ 95</div>
-            <div class="insta-icon">💬 4</div>
-          </div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- REVIEWS / AVIS -->
-  <section id="avis" class="section-pad" style="background: var(--bg);">
+  <!-- REVIEWS (Sticky Stack 5) -->
+  <section id="avis" class="sticky-section" style="background: var(--bg);">
     <div class="container">
       <div class="section-header">
         <div class="kicker">
-           <span class="bar"></span><span>Témoignages</span><span class="bar"></span>
+           <span class="bar"></span><span data-i18n="reviews_kicker">Témoignages</span><span class="bar"></span>
         </div>
-        <h2 class="serif italic">Ce qu'ils disent de nous</h2>
+        <h2 class="serif italic" data-i18n="reviews_title">Ce qu'ils disent de nous</h2>
         <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:8px;">
            <span style="font-weight:700; font-size:18px;">4.9</span>
            <div style="color:#F4B400;">★★★★★</div>
-           <span class="muted" style="font-size:14px;">sur Google</span>
+           <span class="muted" style="font-size:14px;" data-i18n="reviews_google">sur Google</span>
         </div>
       </div>
 
       <div class="reviews-grid">
-         <!-- Card 1 -->
          <div class="review-card">
             <div class="review-header">
                <div class="review-avatar" style="background:#0E2A47;">S</div>
@@ -973,14 +984,10 @@
                   <div style="font-weight:700; font-size:15px;">Sophie Martin</div>
                   <div style="color:#F4B400; font-size:12px;">★★★★★</div>
                </div>
-               <div style="margin-left:auto; opacity:0.5;">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-1.07 3.97-2.9 5.4z" fill="currentColor"/></svg>
-               </div>
             </div>
-            <p class="review-text">"Une expérience incroyable ! Les cocktails sont recherchés et délicieux, et les tapas fusion sont une vraie découverte. Le personnel est adorable. À ne pas manquer à Ciutadella !"</p>
+            <p class="review-text" data-i18n="review_1">"Une expérience incroyable ! Les cocktails sont recherchés et délicieux, et les tapas fusion sont une vraie découverte. Le personnel est adorable. À ne pas manquer à Ciutadella !"</p>
          </div>
 
-         <!-- Card 2 -->
          <div class="review-card">
             <div class="review-header">
                <div class="review-avatar" style="background:#D87C56;">M</div>
@@ -988,14 +995,10 @@
                   <div style="font-weight:700; font-size:15px;">Marc Dubois</div>
                   <div style="color:#F4B400; font-size:12px;">★★★★★</div>
                </div>
-               <div style="margin-left:auto; opacity:0.5;">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-1.07 3.97-2.9 5.4z" fill="currentColor"/></svg>
-               </div>
             </div>
-            <p class="review-text">"Le meilleur endroit de Ciutadella pour un apéro dînatoire. L'ambiance est top, la décoration soignée et les saveurs sont au rendez-vous. Coup de cœur pour les brioches !"</p>
+            <p class="review-text" data-i18n="review_2">"Le meilleur endroit de Ciutadella pour un apéro dînatoire. L'ambiance est top, la décoration soignée et les saveurs sont au rendez-vous. Coup de cœur pour les brioches !"</p>
          </div>
 
-         <!-- Card 3 -->
          <div class="review-card">
             <div class="review-header">
                <div class="review-avatar" style="background:#D6C7B0; color:#0E2A47;">E</div>
@@ -1003,30 +1006,22 @@
                   <div style="font-weight:700; font-size:15px;">Elena Rodriguez</div>
                   <div style="color:#F4B400; font-size:12px;">★★★★★</div>
                </div>
-               <div style="margin-left:auto; opacity:0.5;">
-                  <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-1.07 3.97-2.9 5.4z" fill="currentColor"/></svg>
-               </div>
             </div>
-            <p class="review-text">"Superbe fusion asiatique-méditerranéenne. Les baos sont excellents et très originaux. Je recommande vivement pour une soirée réussie entre amis ou en couple."</p>
+            <p class="review-text" data-i18n="review_3">"Superbe fusion asiatique-méditerranéenne. Les baos sont excellents et très originaux. Je recommande vivement pour une soirée réussie entre amis ou en couple."</p>
          </div>
       </div>
     </div>
   </section>
 
-  <!-- CONTACT -->
-  <section id="contact" class="section-pad contact">
-    <svg class="shape top" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:170px; transform: scaleY(-1);">
-      <path d="M 0 400 Q 200 100 400 50 Q 600 100 800 400 L 800 400 L 0 400 Z" fill="#0E2A47" opacity="0.15"></path>
-      <path d="M 0 400 Q 250 150 400 100 Q 550 150 800 400" stroke="#0E2A47" stroke-width="3" fill="none" opacity="0.22"></path>
-    </svg>
-
+  <!-- CONTACT (Sticky Stack 6) -->
+  <section id="contact" class="contact sticky-section">
     <div class="container">
       <div class="section-header">
         <div class="kicker">
-          <span class="bar"></span><span>Contactez-Nous</span><span class="bar"></span>
+          <span class="bar"></span><span data-i18n="contact_kicker">Contactez-Nous</span><span class="bar"></span>
         </div>
-        <h2 class="serif italic">Réservez Votre Table</h2>
-        <p class="muted">Nous avons hâte de vous accueillir pour une expérience culinaire inoubliable</p>
+        <h2 class="serif italic" data-i18n="contact_title">Réservez Votre Table</h2>
+        <p class="muted" data-i18n="contact_sub">Nous avons hâte de vous accueillir pour une expérience culinaire inoubliable</p>
       </div>
 
       <div class="contact-grid">
@@ -1039,7 +1034,7 @@
                   📍
                 </div>
                 <div>
-                  <div style="font-weight:700; margin-bottom:6px;">Notre Adresse</div>
+                  <div style="font-weight:700; margin-bottom:6px;" data-i18n="info_address">Notre Adresse</div>
                   <div class="muted">
                     Carrer Josep Maria Quadrado, 24, <br>
                     07760 Ciutadella, <br>
@@ -1056,7 +1051,7 @@
                   ☎️
                 </div>
                 <div>
-                  <div style="font-weight:700; margin-bottom:6px;">Téléphone</div>
+                  <div style="font-weight:700; margin-bottom:6px;" data-i18n="info_phone">Téléphone</div>
                   <div class="muted">+34 971 38 12 45</div>
                 </div>
               </div>
@@ -1069,13 +1064,13 @@
                   🕒
                 </div>
                 <div>
-                  <div style="font-weight:700; margin-bottom:6px;">Horaires d'Ouverture</div>
+                  <div style="font-weight:700; margin-bottom:6px;" data-i18n="info_hours">Horaires d'Ouverture</div>
                   <div class="muted">
-                    <div>Jeudi - Vendredi - Dimanche</div>
+                    <div data-i18n="hours_week">Jeudi - Vendredi - Dimanche</div>
                     <div class="coral" style="margin:4px 0 10px;">12h30 - 15h30 • 19h30 - 22h30</div>
-                    <div>Samedi</div>
+                    <div data-i18n="hours_sat">Samedi</div>
                     <div class="coral" style="margin:4px 0 10px;">12h30 - 23h00</div>
-                    <div class="coral italic serif">Fermé le lundi, mardi et mercredi</div>
+                    <div class="coral italic serif" data-i18n="hours_closed">Fermé le lundi, mardi et mercredi</div>
                   </div>
                 </div>
               </div>
@@ -1083,7 +1078,6 @@
             </div>
           </div>
 
-          <!-- INTERACTIVE MAP INTEGRATION -->
           <div class="map-container">
             <iframe 
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3056.885627038162!2d3.8361236111450284!3d40.00219007140939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12be05b5760f8d8b%3A0x8bdade410694f89c!2sGioia%20Aperitivo!5e0!3m2!1sfr!2sfr!4v1709210000000!5m2!1sfr!2sfr" 
@@ -1093,38 +1087,37 @@
               title="Carte Google Maps Gioia Aperitivo">
             </iframe>
           </div>
-
         </div>
 
         <!-- Right: form -->
         <div class="form-wrap">
           <div class="form">
-            <h3 class="serif italic">Réservation Gioia</h3>
+            <h3 class="serif italic" data-i18n="form_title">Réservation Gioia</h3>
 
             <form id="reservationForm">
               <div class="form-grid2">
                 <div>
-                  <label for="name">Nom Complet</label>
+                  <label for="name" data-i18n="label_name">Nom Complet</label>
                   <input id="name" name="name" type="text" placeholder="Votre nom" required>
                 </div>
                 <div>
-                  <label for="email">Email</label>
+                  <label for="email" data-i18n="label_email">Email</label>
                   <input id="email" name="email" type="email" placeholder="votre@email.com" required>
                 </div>
               </div>
 
               <div style="margin-top:12px;">
-                <label for="phone">Téléphone</label>
+                <label for="phone" data-i18n="label_phone">Téléphone</label>
                 <input id="phone" name="phone" type="tel" placeholder="+33 6 12 34 56 78">
               </div>
 
               <div class="form-grid3" style="margin-top:12px;">
                 <div>
-                  <label for="date">Date</label>
+                  <label for="date" data-i18n="label_date">Date</label>
                   <input id="date" name="date" type="date" required>
                 </div>
                 <div>
-                  <label for="time">Heure</label>
+                  <label for="time" data-i18n="label_time">Heure</label>
                   <select id="time" name="time" required>
                     <option value="12:30">12:30</option>
                     <option value="13:00">13:00</option>
@@ -1140,7 +1133,7 @@
               </div>
 
               <div style="margin-top:12px;">
-                <label for="guests">Nombre de Personnes</label>
+                <label for="guests" data-i18n="label_guests">Nombre de Personnes</label>
                 <select id="guests" name="guests" required>
                   <option>1 personne</option>
                   <option selected>2 personnes</option>
@@ -1152,11 +1145,11 @@
               </div>
 
               <div style="margin-top:12px;">
-                <label for="message">Message (optionnel)</label>
-                <textarea id="message" name="message" rows="4" placeholder="Demandes spéciales, allergies..."></textarea>
+                <label for="message" data-i18n="label_message">Message (optionnel)</label>
+                <textarea id="message" name="message" rows="4" placeholder="..."></textarea>
               </div>
 
-              <button class="submit" type="submit">Confirmer la Réservation →</button>
+              <button class="submit" type="submit" data-i18n="form_submit">Confirmer la Réservation →</button>
             </form>
 
             <!-- soft blobs -->
@@ -1168,7 +1161,7 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (Sticky) -->
   <footer>
     <div class="blob1" aria-hidden="true"></div>
     <div class="blob2" aria-hidden="true"></div>
@@ -1178,38 +1171,37 @@
         <div>
           <div class="brand" style="margin-bottom:12px;">
             <div class="logo-wrap" aria-hidden="true">
-              <img src="img/gioia_logo.png" alt="Gioia Logo" onerror="this.src='gioia_logo.webp'">
+              <img src="gioia_logo.webp" alt="Gioia Logo">
             </div>
             <span class="serif italic" style="font-size:24px;">Gioia</span>
           </div>
-          <p class="sand" style="margin:0;">
+          <p class="sand" style="margin:0;" data-i18n="footer_desc">
             Cuisine méditerranéenne fusion au cœur de Minorque. Un voyage culinaire entre traditions et créativité.
           </p>
         </div>
 
         <div>
-          <div class="coral" style="margin-bottom:12px; font-weight:700;">Navigation</div>
+          <div class="coral" style="margin-bottom:12px; font-weight:700;" data-i18n="footer_nav">Navigation</div>
           <ul class="footer-links">
-            <li><button data-scroll="accueil">Accueil</button></li>
-            <li><button data-scroll="a-propos">À Propos</button></li>
-            <li><button data-scroll="menu">Menu</button></li>
-            <li><button data-scroll="instagram">Instagram</button></li>
-            <li><button data-scroll="avis">Avis</button></li>
-            <li><button data-scroll="contact">Contact</button></li>
+            <li><button data-scroll="accueil" data-i18n="nav_home">Accueil</button></li>
+            <li><button data-scroll="a-propos" data-i18n="nav_about">À Propos</button></li>
+            <li><button data-scroll="menu" data-i18n="nav_menu">Menu</button></li>
+            <li><button data-scroll="instagram" data-i18n="nav_insta">Instagram</button></li>
+            <li><button data-scroll="avis" data-i18n="nav_reviews">Avis</button></li>
+            <li><button data-scroll="contact" data-i18n="nav_contact">Contact</button></li>
           </ul>
         </div>
 
         <div>
-          <div class="coral" style="margin-bottom:12px; font-weight:700;">Nous Suivre</div>
+          <div class="coral" style="margin-bottom:12px; font-weight:700;" data-i18n="footer_follow">Nous Suivre</div>
           <nav class="social-links" aria-label="Réseaux sociaux">
-            <a class="social-link" href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a class="social-link" href="https://www.instagram.com/gioia_aperitivo/?hl=fr" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
                 <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4a6 6 0 1 1 0 12a6 6 0 0 1 0-12zm0 2a4 4 0 1 0 0 8a4 4 0 0 0 0-8zm6.5-2.2a1.2 1.2 0 1 1 0 2.4a1.2 1.2 0 0 1 0-2.4z"/>
               </svg>
               <span>Instagram</span>
             </a>
-
-            <a class="social-link" href="https://www.tripadvisor.fr/Restaurant_Review-g187465-d27703194-Reviews-Gioia_Aperitivo-Ciutadella_Menorca_Balearic_Islands.html" target="_blank" rel="noopener noreferrer" aria-label="Tripadvisor">
+            <a class="social-link" href="https://www.tripadvisor.fr/Restaurant_Review-g187465-d27703194-Reviews-Gioia_Aperitivo-Ciutadella_Menorca_Balearic_Islands.html" target="_blank" rel="noopener noreferrer">
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
                 <path d="M12 5c-2.4 0-4.6.8-6.3 2.1H3.5a1 1 0 1 0 0 2h.9a5.5 5.5 0 0 0 1 6.6a5.3 5.3 0 0 0 7.3-.2l.3-.3l.3.3a5.3 5.3 0 0 0 7.3.2a5.5 5.5 0 0 0 1-6.6h.9a1 1 0 1 0 0-2h-2.2A10 10 0 0 0 12 5zm-5.2 5.2a3.1 3.1 0 1 1 0 6.2a3.1 3.1 0 0 1 0-6.2zm10.4 0a3.1 3.1 0 1 1 0 6.2a3.1 3.1 0 0 1 0-6.2zm-10.4 2a1.1 1.1 0 1 0 0 2.2a1.1 1.1 0 0 0 0-2.2zm10.4 0a1.1 1.1 0 1 0 0 2.2a1.1 1.1 0 0 0 0-2.2z"/>
               </svg>
@@ -1220,19 +1212,258 @@
       </div>
 
       <div class="footer-bottom">
-        <div>&copy; 2025 Gioia - Restaurant Méditerranéen Fusion à Minorque. Tous droits réservés.</div>
+        <div>&copy; 2025 Gioia - Restaurant Méditerranéen Fusion à Minorque.</div>
         <small>Ciutadella, Îles Baléares</small>
       </div>
     </div>
   </footer>
 
   <script>
+    // --- TRANSLATION DATA ---
+    const translations = {
+      fr: {
+        nav_home: "Accueil",
+        nav_about: "À Propos",
+        nav_menu: "Menu",
+        nav_insta: "Instagram",
+        nav_reviews: "Avis",
+        nav_contact: "Contact",
+        hero_title: "Restaurant méditerranéen à Minorque",
+        hero_pill: "Cuisine Méditerranéenne & Fusion",
+        hero_sub: "Une célébration des saveurs méditerranéennes à Minorque",
+        btn_menu: "Découvrir Notre Menu",
+        btn_book: "Réserver une Table",
+        about_kicker: "Notre Histoire",
+        about_title: "L'Esprit Gioia",
+        about_p1: "<span class='coral serif italic' style='font-size:28px;'>Gioia</span> signifie 'joie' en italien, et c'est exactement ce que nous souhaitons partager avec vous. Situé au cœur de Minorque, notre restaurant célèbre la richesse des saveurs méditerranéennes avec une touche de créativité contemporaine.",
+        about_p2: "De nos ceviches rafraîchissants à nos baos fusion asiatique-méditerranéenne, en passant par nos tapas traditionnelles, chaque plat est une invitation au voyage culinaire. Nous travaillons avec des producteurs locaux de Minorque pour vous offrir le meilleur de l'île.",
+        about_quote: "\"Chaque plat raconte une histoire, celle de la mer, du soleil et de la passion.\"",
+        about_team: "— L'équipe Gioia",
+        feat_fusion_title: "Cuisine Fusion",
+        feat_fusion_desc: "Un mariage audacieux entre traditions méditerranéennes et influences asiatiques",
+        feat_local_title: "Produits Locaux",
+        feat_local_desc: "Fromages de Torre d'en Quart et ingrédients frais de Minorque",
+        feat_cocktail_title: "Cocktails Créatifs",
+        feat_cocktail_desc: "Une carte de cocktails signature inspirée par la Méditerranée",
+        menu_kicker: "Notre Carte",
+        menu_sub: "Une cuisine fusion française et hispanique avec des produits locaux de Minorque",
+        insta_title: "Le Mur Gioia",
+        insta_sub: "Rejoignez notre communauté sur Instagram",
+        insta_followers: "2.8k Abonnés",
+        insta_btn: "S'abonner",
+        reviews_kicker: "Témoignages",
+        reviews_title: "Ce qu'ils disent de nous",
+        reviews_google: "sur Google",
+        review_1: "\"Une expérience incroyable ! Les cocktails sont recherchés et délicieux, et les tapas fusion sont une vraie découverte. Le personnel est adorable. À ne pas manquer à Ciutadella !\"",
+        review_2: "\"Le meilleur endroit de Ciutadella pour un apéro dînatoire. L'ambiance est top, la décoration soignée et les saveurs sont au rendez-vous. Coup de cœur pour les brioches !\"",
+        review_3: "\"Superbe fusion asiatique-méditerranéenne. Les baos sont excellents et très originaux. Je recommande vivement pour une soirée réussie entre amis ou en couple.\"",
+        contact_kicker: "Contactez-Nous",
+        contact_title: "Réservez Votre Table",
+        contact_sub: "Nous avons hâte de vous accueillir pour une expérience culinaire inoubliable",
+        info_address: "Notre Adresse",
+        info_phone: "Téléphone",
+        info_hours: "Horaires d'Ouverture",
+        hours_week: "Jeudi - Vendredi - Dimanche",
+        hours_sat: "Samedi",
+        hours_closed: "Fermé le lundi, mardi et mercredi",
+        form_title: "Réservation Gioia",
+        label_name: "Nom Complet",
+        label_email: "Email",
+        label_phone: "Téléphone",
+        label_date: "Date",
+        label_time: "Heure",
+        label_guests: "Nombre de Personnes",
+        label_message: "Message (optionnel)",
+        form_submit: "Confirmer la Réservation →",
+        footer_desc: "Cuisine méditerranéenne fusion au cœur de Minorque. Un voyage culinaire entre traditions et créativité.",
+        footer_nav: "Navigation",
+        footer_follow: "Nous Suivre",
+        cat_entrees: "Entrées & Salades",
+        cat_tapas: "Tapas",
+        cat_baos: "Bao & Brioches",
+        cat_plats: "Plats",
+        cat_desserts: "Desserts",
+        cat_cocktails: "Cocktails",
+        cat_mocktails: "Cocktails Sans Alcool",
+        cat_vins: "Vins",
+        cat_sangrias: "Sangrias & Bières",
+        cat_vermouth: "Vermouth & Softs"
+      },
+      es: {
+        nav_home: "Inicio",
+        nav_about: "Nosotros",
+        nav_menu: "Menú",
+        nav_insta: "Instagram",
+        nav_reviews: "Opiniones",
+        nav_contact: "Contacto",
+        hero_title: "Restaurante mediterráneo en Menorca",
+        hero_pill: "Cocina Mediterránea & Fusión",
+        hero_sub: "Una celebración de los sabores mediterráneos en Menorca",
+        btn_menu: "Descubrir el Menú",
+        btn_book: "Reservar Mesa",
+        about_kicker: "Nuestra Historia",
+        about_title: "El Espíritu Gioia",
+        about_p1: "<span class='coral serif italic' style='font-size:28px;'>Gioia</span> significa 'alegría' en italiano, y eso es exactamente lo que queremos compartir. Situado en el corazón de Menorca, nuestro restaurante celebra la riqueza de los sabores mediterráneos con un toque de creatividad contemporánea.",
+        about_p2: "Desde nuestros ceviches refrescantes hasta nuestros baos de fusión asiática-mediterránea, pasando por nuestras tapas tradicionales, cada plato es una invitación a un viaje culinario. Trabajamos con productores locales de Menorca.",
+        about_quote: "\"Cada plato cuenta una historia, la del mar, el sol y la pasión.\"",
+        about_team: "— El equipo Gioia",
+        feat_fusion_title: "Cocina Fusión",
+        feat_fusion_desc: "Un matrimonio audaz entre tradiciones mediterráneas e influencias asiáticas",
+        feat_local_title: "Productos Locales",
+        feat_local_desc: "Quesos de Torre d'en Quart e ingredientes frescos de Menorca",
+        feat_cocktail_title: "Cócteles Creativos",
+        feat_cocktail_desc: "Una carta de cócteles de autor inspirada en el Mediterráneo",
+        menu_kicker: "Nuestra Carta",
+        menu_sub: "Una cocina fusión francesa e hispana con productos locales de Menorca",
+        insta_title: "El Muro Gioia",
+        insta_sub: "Únete a nuestra comunidad en Instagram",
+        insta_followers: "2.8k Seguidores",
+        insta_btn: "Seguir",
+        reviews_kicker: "Testimonios",
+        reviews_title: "Lo que dicen de nosotros",
+        reviews_google: "en Google",
+        review_1: "\"¡Una experiencia increíble! Los cócteles son sofisticados y deliciosos, y las tapas fusión son un verdadero descubrimiento. El personal es encantador. ¡Imprescindible en Ciutadella!\"",
+        review_2: "\"El mejor lugar de Ciutadella para un aperitivo cena. El ambiente es genial, la decoración cuidada y los sabores están a la altura. ¡Me enamoré de los brioches!\"",
+        review_3: "\"Magnífica fusión asiática-mediterránea. Los baos son excelentes y muy originales. Recomiendo encarecidamente para una velada exitosa.\"",
+        contact_kicker: "Contáctanos",
+        contact_title: "Reserva Tu Mesa",
+        contact_sub: "Esperamos darte la bienvenida para una experiencia culinaria inolvidable",
+        info_address: "Nuestra Dirección",
+        info_phone: "Teléfono",
+        info_hours: "Horarios de Apertura",
+        hours_week: "Jueves - Viernes - Domingo",
+        hours_sat: "Sábado",
+        hours_closed: "Cerrado lunes, martes y miércoles",
+        form_title: "Reserva Gioia",
+        label_name: "Nombre Completo",
+        label_email: "Email",
+        label_phone: "Teléfono",
+        label_date: "Fecha",
+        label_time: "Hora",
+        label_guests: "Número de Personas",
+        label_message: "Mensaje (opcional)",
+        form_submit: "Confirmar Reserva →",
+        footer_desc: "Cocina mediterránea fusión en el corazón de Menorca. Un viaje culinario entre tradiciones y creatividad.",
+        footer_nav: "Navegación",
+        footer_follow: "Síguenos",
+        cat_entrees: "Entrantes & Ensaladas",
+        cat_tapas: "Tapas",
+        cat_baos: "Bao & Brioches",
+        cat_plats: "Platos",
+        cat_desserts: "Postres",
+        cat_cocktails: "Cócteles",
+        cat_mocktails: "Cócteles Sin Alcohol",
+        cat_vins: "Vinos",
+        cat_sangrias: "Sangrías & Cervezas",
+        cat_vermouth: "Vermouth & Refrescos"
+      },
+      en: {
+        nav_home: "Home",
+        nav_about: "About",
+        nav_menu: "Menu",
+        nav_insta: "Instagram",
+        nav_reviews: "Reviews",
+        nav_contact: "Contact",
+        hero_title: "Mediterranean Restaurant in Menorca",
+        hero_pill: "Mediterranean Cuisine & Fusion",
+        hero_sub: "A celebration of Mediterranean flavors in Menorca",
+        btn_menu: "Discover Our Menu",
+        btn_book: "Book a Table",
+        about_kicker: "Our Story",
+        about_title: "The Gioia Spirit",
+        about_p1: "<span class='coral serif italic' style='font-size:28px;'>Gioia</span> means 'joy' in Italian, and that's exactly what we want to share with you. Located in the heart of Menorca, our restaurant celebrates the richness of Mediterranean flavors with a touch of contemporary creativity.",
+        about_p2: "From our refreshing ceviches to our Asian-Mediterranean fusion baos, and our traditional tapas, every dish is an invitation to a culinary journey. We work with local producers from Menorca to offer you the best of the island.",
+        about_quote: "\"Every dish tells a story, one of the sea, the sun, and passion.\"",
+        about_team: "— The Gioia Team",
+        feat_fusion_title: "Fusion Cuisine",
+        feat_fusion_desc: "A bold marriage between Mediterranean traditions and Asian influences",
+        feat_local_title: "Local Products",
+        feat_local_desc: "Cheeses from Torre d'en Quart and fresh ingredients from Menorca",
+        feat_cocktail_title: "Creative Cocktails",
+        feat_cocktail_desc: "A signature cocktail menu inspired by the Mediterranean",
+        menu_kicker: "Our Menu",
+        menu_sub: "French and Hispanic fusion cuisine with local Menorcan products",
+        insta_title: "The Gioia Wall",
+        insta_sub: "Join our community on Instagram",
+        insta_followers: "2.8k Followers",
+        insta_btn: "Follow",
+        reviews_kicker: "Testimonials",
+        reviews_title: "What they say about us",
+        reviews_google: "on Google",
+        review_1: "\"An incredible experience! The cocktails are sophisticated and delicious, and the fusion tapas are a real discovery. The staff is lovely. A must-visit in Ciutadella!\"",
+        review_2: "\"The best place in Ciutadella for dinner drinks. The atmosphere is great, the decoration neat and the flavors are there. Fell in love with the brioches!\"",
+        review_3: "\"Superb Asian-Mediterranean fusion. The baos are excellent and very original. Highly recommend for a successful evening with friends or as a couple.\"",
+        contact_kicker: "Contact Us",
+        contact_title: "Book Your Table",
+        contact_sub: "We look forward to welcoming you for an unforgettable culinary experience",
+        info_address: "Our Address",
+        info_phone: "Phone",
+        info_hours: "Opening Hours",
+        hours_week: "Thursday - Friday - Sunday",
+        hours_sat: "Saturday",
+        hours_closed: "Closed Monday, Tuesday, and Wednesday",
+        form_title: "Gioia Reservation",
+        label_name: "Full Name",
+        label_email: "Email",
+        label_phone: "Phone",
+        label_date: "Date",
+        label_time: "Time",
+        label_guests: "Number of Guests",
+        label_message: "Message (optional)",
+        form_submit: "Confirm Reservation →",
+        footer_desc: "Mediterranean fusion cuisine in the heart of Menorca. A culinary journey between traditions and creativity.",
+        footer_nav: "Navigation",
+        footer_follow: "Follow Us",
+        cat_entrees: "Starters & Salads",
+        cat_tapas: "Tapas",
+        cat_baos: "Bao & Brioches",
+        cat_plats: "Main Courses",
+        cat_desserts: "Desserts",
+        cat_cocktails: "Cocktails",
+        cat_mocktails: "Alcohol-Free Cocktails",
+        cat_vins: "Wines",
+        cat_sangrias: "Sangrias & Beers",
+        cat_vermouth: "Vermouth & Softs"
+      }
+    };
+
+    let currentLang = 'fr';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      
+      // Update Translation Keys
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if(translations[lang][key]) {
+           // Allow HTML for specific keys like about_p1
+           if(key === 'about_p1') {
+             el.innerHTML = translations[lang][key];
+           } else {
+             el.innerText = translations[lang][key];
+           }
+        }
+      });
+
+      // Update Buttons State
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.innerText.toLowerCase() === lang) btn.classList.add('active');
+      });
+
+      // Re-render Menu Tabs to update Category Names
+      renderTabs();
+      // Re-render current category items
+      renderMenu();
+    }
+
+
     // --- Scroll helpers ---
     function scrollToId(id){
       const el = document.getElementById(id);
       if(!el) return;
       // Offset for sticky header
-      const offset = 80; 
+      const offset = 90; 
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = el.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -1244,12 +1475,11 @@
       });
     }
 
-    // Nav buttons + footer buttons + CTAs
+    // Nav buttons
     document.querySelectorAll("[data-scroll]").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.getAttribute("data-scroll");
         if(id) scrollToId(id);
-        // close mobile
         mobilePanel.classList.remove("show");
       });
     });
@@ -1262,8 +1492,9 @@
     });
 
     // --- Menu data ---
+    // Keys match translation keys for Categories
     const menuData = {
-      "Entrées & Salades": {
+      "cat_entrees": {
         icon: "🥗",
         items: [
           { name: "Salade Caesar", description: "Salade verte, poulet, sauce césar, croûtons, parmesan" },
@@ -1273,7 +1504,7 @@
           { name: "Plateau de Fromages", description: "Fromages artisanaux de la ferme Torre d'en Quart" },
         ]
       },
-      "Tapas": {
+      "cat_tapas": {
         icon: "🍤",
         items: [
           { name: "Patatas Bravas", description: "Pommes de terre croustillantes, sauce bravas" },
@@ -1283,7 +1514,7 @@
           { name: "Croquettes du Jour", description: "Selon la sélection du chef" },
         ]
       },
-      "Bao & Brioches": {
+      "cat_baos": {
         icon: "🥟",
         items: [
           { name: "Black Bao Calamares", description: "Bao noir, calamars croustillants, sauce tartare, citron vert" },
@@ -1294,7 +1525,7 @@
           { name: "Brioche Poulet Confit", description: "Poulet confit, salade verte, tartare, avocat" },
         ]
       },
-      "Plats": {
+      "cat_plats": {
         icon: "🐙",
         items: [
           { name: "Pulpe avec purée citronnée", description: "Poulpe tendre, purée de pomme de terre citronnée" },
@@ -1303,7 +1534,7 @@
           { name: "Ceviche Classique", description: "Poisson du jour, lait de tigre, maïs, coriandre, oignon" },
         ]
       },
-      "Desserts": {
+      "cat_desserts": {
         icon: "🍮",
         items: [
           { name: "Tarte au Fromage", description: "Cheesecake onctueux" },
@@ -1312,7 +1543,7 @@
           { name: "Ensaimada", description: "Pistache et mascarpone" },
         ]
       },
-      "Cocktails": {
+      "cat_cocktails": {
         icon: "🍹",
         items: [
           { name: "El Gioia", description: "Cocktail signature de la maison", special: true },
@@ -1330,7 +1561,7 @@
           { name: "Pomada", description: "Gin amb Llimonada - Spécialité minorquine", special: true },
         ]
       },
-      "Cocktails Sans Alcool": {
+      "cat_mocktails": {
         icon: "🍓",
         items: [
           { name: "Ruby Spritz", description: "Spritz fruité sans alcool" },
@@ -1340,7 +1571,7 @@
           { name: "Pop Corn Spritz", description: "Spritz pétillant" },
         ]
       },
-      "Vins": {
+      "cat_vins": {
         icon: "🍷",
         items: [
           { name: "Binifadet Merlot", description: "Blanc - Minorque", category: "Blanc" },
@@ -1355,7 +1586,7 @@
           { name: "Coste Moynier IGP Pays d'Oc", description: "Rouge", category: "Rouge" },
         ]
       },
-      "Sangrias & Bières": {
+      "cat_sangrias": {
         icon: "🍺",
         items: [
           { name: "Sangria Classique", description: "Vin rouge, fruits, épices", category: "Sangria" },
@@ -1366,7 +1597,7 @@
           { name: "Free Damm", description: "Sans alcool", category: "Bière" },
         ]
       },
-      "Vermouth & Softs": {
+      "cat_vermouth": {
         icon: "🥤",
         items: [
           { name: "Rojo Binitord Menorca", description: "Vermouth de Minorque", category: "Vermouth", special: true },
@@ -1383,7 +1614,7 @@
     const menuCategoryTitle = document.getElementById("menuCategoryTitle");
     const menuCategoryIcon = document.getElementById("menuCategoryIcon");
 
-    let activeCategory = "Entrées & Salades";
+    let activeCategoryKey = "cat_entrees";
 
     function miniArchSvg(pos){
       const cls = pos === "top" ? "mini-arch top" : "mini-arch bottom";
@@ -1395,23 +1626,26 @@
     }
 
     function renderTabs(){
-      const categories = Object.keys(menuData);
-      menuTabs.innerHTML = categories.map(cat => {
-        const active = cat === activeCategory ? "active" : "";
-        const icon = menuData[cat].icon;
+      const categoryKeys = Object.keys(menuData);
+      menuTabs.innerHTML = categoryKeys.map(key => {
+        const active = key === activeCategoryKey ? "active" : "";
+        const icon = menuData[key].icon;
+        // Get translated name
+        const displayName = translations[currentLang][key] || key;
+        
         return `
-          <button class="tab ${active}" data-cat="${cat}">
-            ${cat === activeCategory ? miniArchSvg("top") : ""}
+          <button class="tab ${active}" data-cat="${key}">
+            ${key === activeCategoryKey ? miniArchSvg("top") : ""}
             <span style="font-size:22px">${icon}</span>
-            <span>${cat}</span>
-            ${cat === activeCategory ? miniArchSvg("bottom") : ""}
+            <span>${displayName}</span>
+            ${key === activeCategoryKey ? miniArchSvg("bottom") : ""}
           </button>
         `;
       }).join("");
 
       menuTabs.querySelectorAll(".tab").forEach(btn => {
         btn.addEventListener("click", () => {
-          activeCategory = btn.getAttribute("data-cat");
+          activeCategoryKey = btn.getAttribute("data-cat");
           renderTabs();
           renderMenu();
         });
@@ -1419,12 +1653,15 @@
     }
 
     function renderMenu(){
-      const data = menuData[activeCategory];
-      menuCategoryTitle.textContent = activeCategory;
+      const data = menuData[activeCategoryKey];
+      // Translate title
+      menuCategoryTitle.textContent = translations[currentLang][activeCategoryKey];
       menuCategoryIcon.textContent = data.icon;
 
       menuItems.innerHTML = data.items.map(it => {
         const special = it.special ? "special" : "";
+        // Note: Menu descriptions are not fully translated in this demo structure for simplicity, 
+        // but the titles and headers are.
         return `
           <div class="item ${special}">
             ${it.special ? `<div class="badge-special">Spécialité</div>` : ""}
@@ -1436,8 +1673,8 @@
       }).join("");
     }
 
-    renderTabs();
-    renderMenu();
+    // Init with French
+    setLanguage('fr');
 
     // Form: demo
     document.getElementById("reservationForm").addEventListener("submit", (e) => {
